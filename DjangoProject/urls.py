@@ -16,10 +16,26 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from blog import views
+
+# from blog import views
+# from app01 import views
+from app02 import views
 
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('post/<int:post_id>', views.post_detail, name='post_detail'),
-    path('admin/', admin.site.urls),
+    # blog
+    # path('', views.home, name='home'),
+    # path('post/<int:post_id>', views.post_detail, name='post_detail'),
+
+    # app01
+    # path('index/', views.index),
+    # path('admin/', admin.site.urls),
+    # path('news/', views.news),
+    # path('news_unicom/', views.news_unicom),
+    # path('login/', views.login),
+    # path('info/list/', views.info_list),
+    # path('info/add/', views.info_add),
+    # path('info/delete/', views.info_delete),
+
+    # app02
+
 ]
