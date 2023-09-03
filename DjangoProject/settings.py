@@ -101,7 +101,7 @@ DATABASES = {
     # app02 database
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DjangoProjectapp02',
+        'NAME': 'app_02',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': '127.0.0.1',
