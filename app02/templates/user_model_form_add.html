@@ -1,5 +1,4 @@
-{% extends 'layout.html' %}
-
+{% extends "layout.html" %}
 
 {% block content %}
 
@@ -9,21 +8,19 @@
                 <h3 class="panel-title"> 新建用户 </h3>
             </div>
             <div class="panel-body">
+                {#            novalidate表示关闭浏览器校验#}
                 <form method="post" novalidate>
                     {% csrf_token %}
-
-                    {% for field in form %}
+                    {% for foo in form %}
                         <div class="form-group">
-                            <label>{{ field.label }}</label>
-                            {{ field }}
-                            <span style="color: red;">{{ field.errors.0 }}</span>
+                            <label>{{ foo.label }}</label>
+                            {{ foo }}
+                            <span style="color: red;">{{ foo.errors.0 }}</span>
                         </div>
                     {% endfor %}
-
                     <button type="submit" class="btn btn-primary">提 交</button>
                 </form>
             </div>
         </div>
     </div>
-
 {% endblock %}

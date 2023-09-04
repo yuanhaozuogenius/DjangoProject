@@ -268,7 +268,7 @@ class MyForm(Form):
 def user_add(request):
     if request.method == "GET":
         form = MyForm()
-        return render(request, 'user_add.html',{"form":form})
+        return render(request, 'user_add_copy.html', {"form": form})
 ```
 
 #### 2.user_add.html
@@ -319,16 +319,17 @@ class UserInfo(models.Model):
 
 ```python
 class MyForm(ModelForm):
-    xx = form.CharField*("...")
+    xx = form.CharField * ("...")
+
     class Meta:
         model = UserInfo
-        fields = ["name","password","age","xx"]
+        fields = ["name", "password", "age", "xx"]
 
 
 def user_add(request):
     if request.method == "GET":
         form = MyForm()
-        return render(request, 'user_add.html',{"form":form})
+        return render(request, 'user_add_copy.html', {"form": form})
 ```
 
 #### 2.user_add.html

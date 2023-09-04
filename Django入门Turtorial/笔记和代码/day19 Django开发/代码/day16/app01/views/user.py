@@ -15,7 +15,7 @@ def user_list(request):
         "queryset": page_object.page_queryset,
         "page_string": page_object.html(),
     }
-    return render(request, 'user_list.html', context)
+    return render(request, 'user_list_copy.html', context)
 
 
 def user_add(request):
@@ -26,7 +26,7 @@ def user_add(request):
             'gender_choices': models.UserInfo.gender_choices,
             "depart_list": models.Department.objects.all()
         }
-        return render(request, 'user_add.html', context)
+        return render(request, 'user_add_copy.html', context)
 
     # 获取用户提交的数据
     user = request.POST.get('user')
@@ -50,7 +50,7 @@ def user_model_form_add(request):
     """ 添加用户（ModelForm版本）"""
     if request.method == "GET":
         form = UserModelForm()
-        return render(request, 'user_model_form_add.html', {"form": form})
+        return render(request, 'user_model_form_add_copy.html', {"form": form})
 
     # 用户POST提交数据，数据校验。
     form = UserModelForm(data=request.POST)
@@ -63,7 +63,7 @@ def user_model_form_add(request):
         return redirect('/user/list/')
 
     # 校验失败（在页面上显示错误信息）
-    return render(request, 'user_model_form_add.html', {"form": form})
+    return render(request, 'user_model_form_add_copy.html', {"form": form})
 
 
 def user_edit(request, nid):

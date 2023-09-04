@@ -1,12 +1,15 @@
 from django.db import models
 
+
 # Create your models here.
 
 class Department(models.Model):
     """ 部门表 """
     title = models.CharField(verbose_name='标题', max_length=32)
 
-
+    # 通过面向对象，重写设定内置输出函数达到在页面输出具体的object.title而不是object本身
+    def __str__(self):
+        return self.title
 
 
 class UserInfo(models.Model):
@@ -27,7 +30,7 @@ class UserInfo(models.Model):
     #   - 生成数据列 depart_id
     # 3.部门表被删除
     # ### 3.1 级联删除
-    depart = models.ForeignKey(to="Department", to_field="id", on_delete=models.CASCADE)
+    depart = models.ForeignKey(verbose_name="部门", to="Department", to_field="id", on_delete=models.CASCADE)
     # ### 3.2 置空
     # depart = models.ForeignKey(to="Department", to_field="id", null=True, blank=True, on_delete=models.SET_NULL)
 
@@ -37,4 +40,3 @@ class UserInfo(models.Model):
         (2, "女"),
     )
     gender = models.SmallIntegerField(verbose_name="性别", choices=gender_choices)
-

@@ -7,11 +7,11 @@ def index(request):
 
 def user_list(request):
     # 根据app的注册顺序，在每个app下的templates目录中寻找
-    return render(request, "user_list.html")
+    return render(request, "user_list_copy.html")
 
 
 def user_add(request):
-    return render(request, 'user_add.html')
+    return render(request, 'user_add_copy.html')
 
 
 def tpl(request):
