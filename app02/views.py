@@ -198,6 +198,8 @@ def user_edit(request, nid):
     # 根据主键nid查找到要修改的那条记录
     """这里get()一定要写 pk=xxxx 否则报错"""
     instance = models.UserInfo.objects.get(pk=nid)
+    # 或用filter实现
+    # instance = models.UserInfo.objects.filter(id=nid).first()
 
     if request.method == "GET":
         form = UserModelForm(instance=instance)
@@ -211,6 +213,8 @@ def user_edit(request, nid):
             # print("cleaned_data:", form.cleaned_data)
             # print("changed_data:", form.changed_data)
 
+            # 默认保存的是用户输入的所有数据，如果想要再用户输入以外增加一点值
+            # form.instance.字段名 = 值
             form.save()
             return redirect('/user/list/')
         # 校验失败（在页面上显示错误信息）
