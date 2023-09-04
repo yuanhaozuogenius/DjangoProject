@@ -195,16 +195,17 @@ def user_model_form_add(request):
 
 
 def user_edit(request, nid):
-    """ 修改用户 """
+    # 根据主键nid查找到要修改的那条记录
+    """这里get()一定要写 pk=xxxx 否则报错"""
+    instance = models.UserInfo.objects.get(pk=nid)
+
     if request.method == "GET":
-        form = UserModelForm()
+        form = UserModelForm(instance=instance)
         return render(request, 'user_edit.html', {"form": form})
 
     # 用户POST提交数据，数据校验。
     if request.method == "POST":
-        # 根据主键nid查找到要修改的那条记录
-        '''这里get方法一定要写 pk=xxxx 否则报错'''
-        instance = models.UserInfo.objects.get(pk=nid)
+
         form = UserModelForm(data=request.POST, instance=instance)
         if form.is_valid():
             # print("cleaned_data:", form.cleaned_data)
