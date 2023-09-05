@@ -38,6 +38,7 @@ urlpatterns = [
     # app02 部门管理
     path('depart/list/', views.depart_list),
     path('depart/add/', views.depart_add),
+    path('depart/init_add/', views.depart_init_add),
     path('depart/delete/', views.depart_delete),
     path('depart/<int:nid>/edit/', views.depart_edit),
 

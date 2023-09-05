@@ -18,6 +18,20 @@ def depart_list(request):
     return render(request, 'depart_list.html', {'queryset': queryset})
 
 
+def depart_init_add(request):
+    """ 添加部门（一键添加） """
+
+    # 创建初始测试数据
+    init_depart_list = ["集中营运产品部", "基础平台部", "资负预财部", "IT维护部", "网络安全部", "英语学习部"]
+    # 添加到数据库中
+    for department_name in init_depart_list:
+        # 解包数据
+        models.Department.objects.create(title=department_name)
+
+    # 返回到用户列表页面
+    return redirect("/depart/list/")
+
+
 def depart_add(request):
     """ 添加部门 """
     if request.method == "GET":
@@ -127,7 +141,12 @@ def user_init_add(request):
     init_user_list = [
         ("韩超", "666", 23, 100.68, "2020-01-11", 2, 1),
         ("刘东", "123", 23, 100.68, "2010-11-11", 1, 4),
-        ("朱虎飞", "999", 33, 9900.68, "2021-05-11", 1, 1)]
+        ("朱虎飞", "999", 33, 9900.68, "2021-05-11", 1, 1),
+        ("Barry", "311", 32, 7777777, "2004-08-06", 1, 1),
+        ("Mechelle", "9124124", 65, 8888888, "1888-12-24", 1, 1),
+        ("周亚男", "912412s", 23, 9999999, "1995-03-10", 1, 1),
+        ("黄飞鸿", "gsdgdsfg", 13, 22222222.22, "2024-12-11", 1, 1),
+    ]
     # 添加到数据库中
     for data in init_user_list:
         # 解包数据
