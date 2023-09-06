@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.shortcuts import render, redirect
 
 from app02 import models
@@ -186,6 +188,7 @@ class UserModelForm(forms.ModelForm):
         # 循环找到每个字段对象的插件field.widget.attrs，添加class="form-control"
         # 对象 field
         for name, field in self.fields.items():
+            # 设置password不应用 class="form-control"效果
             # if name == "password":
             #     continue
             field.widget.attrs = {"class": "form-control", "placeholder": field.label}
@@ -239,3 +242,155 @@ def user_edit(request, nid):
         # 校验失败（在页面上显示错误信息）
         else:
             return render(request, "user_edit.html", {"form": form})
+
+
+class PrettyModelForm(forms.ModelForm):
+    # 验证：方式1 字段+正则
+    mobile = forms.CharField(
+        label="手机号",
+        validators=[RegexValidator(r'^1[3-9]\d{9}$', '手机号格式错误')]
+    )
+
+    # 验证：方式2 钩子方法, ModelForm会自动调用函数名为 clean_字段名，在函数体内自己写验证方法
+    def clean_mobile(self):
+        txt_mobile = self.cleaned_data["mobile"]
+
+        exists = models.PrettyNum.objects.filter(mobile=txt_mobile).exists()
+        if exists:
+            raise ValidationError("手机号已存在")
+
+        # 验证通过，用户输入的值返回
+        return txt_mobile
+
+    # 设置字段灰显，不可编辑
+    level = forms.IntegerField(label="级别", disabled=True)
+
+    class Meta:
+        model = models.PrettyNum
+        # fields = ["mobile", "price", "level", "status"]
+        # exclude = ["level"]
+        fields = "__all__"
+
+    '''方法二：改源码，通过循环找到所有的插件，设置插件的属性field.widget.attrs = class ": "form-control" '''
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # 循环找到每个字段对象的插件field.widget.attrs，添加class="form-control"
+        # 对象 field
+        for name, field in self.fields.items():
+            field.widget.attrs = {"class": "form-control", "placeholder": field.label}
+
+
+"""由于编辑和新增时业务逻辑不一样 需要分开写一个类来定义规则"""
+"""添加：【正则表达式】【手机号不能存在】"""
+"""编辑：【正则表达式】【除了自己以外，手机号不能存在】"""
+
+
+class PrettyEditModelForm(forms.ModelForm):
+    # 验证：方式1 字段+正则
+    mobile = forms.CharField(
+        label="手机号",
+        validators=[RegexValidator(r'^1[3-9]\d{9}$', '手机号格式错误')]
+    )
+
+    # 验证：方式2 钩子方法, ModelForm会自动调用函数名为 clean_字段名，在函数体内自己写验证方法
+    def clean_mobile(self):
+        txt_mobile = self.cleaned_data["mobile"]
+        # 获取当前编辑的哪一行的ID
+        nid = self.instance.pk
+        exists = models.PrettyNum.objects.filter(mobile=txt_mobile).exclude(pk=nid).exists()
+        if exists:
+            raise ValidationError("手机号已存在")
+
+        # 验证通过，用户输入的值返回
+        return txt_mobile
+
+    # 设置字段灰显，不可编辑
+    level = forms.IntegerField(label="级别", disabled=True)
+
+    class Meta:
+        model = models.PrettyNum
+        # fields = ["mobile", "price", "level", "status"]
+        # exclude = ["level"]
+        fields = "__all__"
+
+    '''方法二：改源码，通过循环找到所有的插件，设置插件的属性field.widget.attrs = class ": "form-control" '''
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # 循环找到每个字段对象的插件field.widget.attrs，添加class="form-control"
+        # 对象 field
+        for name, field in self.fields.items():
+            field.widget.attrs = {"class": "form-control", "placeholder": field.label}
+
+
+def pretty_list(request):
+    """ 靓号列表 """
+
+    # select * from app02_prettynum order by id , level desc;
+    queryset = models.PrettyNum.objects.all().order_by("id", "-level")
+    return render(request, "pretty_list.html", {'queryset': queryset})
+
+
+def pretty_add(request):
+    """ 添加靓号 """
+    if request.method == "GET":
+        form = PrettyModelForm()
+        return render(request, 'pretty_add.html', {"form": form})
+
+    if request.method == "POST":
+        form = PrettyModelForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/pretty/list/')
+        else:
+            return render(request, 'pretty_add.html', {"form": form})
+
+
+def pretty_init_add(request):
+    """ 添加靓号（一键添加） """
+
+    # 创建初始测试数据
+    init_pretty_list = [
+        ("18468033999", 45, 2, 1),
+        ("13077241792", 2, 1, 1),
+        ("13077241795", 23, 2, 0),
+        ("17880739082", 444, 3, 1),
+        ("17727969245", 213123, 4, 0),
+        ("17727969254", 9999999, 4, 0),
+    ]
+    # 添加到数据库中
+    for data in init_pretty_list:
+        # 解包数据
+        mobile, price, level, status = data
+        models.PrettyNum.objects.create(mobile=mobile, price=price, level=level, status=status)
+
+    # 返回到用户列表页面
+    return redirect("/pretty/list/")
+
+
+def pretty_edit(request, nid):
+    """ 编辑靓号 """
+    row_object = models.PrettyNum.objects.filter(id=nid).first()
+
+    if request.method == "GET":
+        form = PrettyEditModelForm(instance=row_object)
+        return render(request, 'pretty_edit.html', {"form": form})
+
+    form = PrettyEditModelForm(data=request.POST, instance=row_object)
+    if form.is_valid():
+        form.save()
+        return redirect('/pretty/list/')
+
+    return render(request, 'pretty_edit.html', {"form": form})
+
+
+def pretty_delete(request):
+    """ 删除靓号"""
+    nid = request.GET.get('nid')
+
+    # 删除
+    models.PrettyNum.objects.filter(id=nid).delete()
+
+    # 重定向回靓号列表
+    return redirect("/pretty/list/")

@@ -42,10 +42,19 @@ urlpatterns = [
     path('depart/delete/', views.depart_delete),
     path('depart/<int:nid>/edit/', views.depart_edit),
 
+    # app02 用户管理
     path('user/list/', views.user_list),
     path('user/add/', views.user_add),
     path('user/model/form/add/', views.user_model_form_add),
     path('user/init_add/', views.user_init_add),
     path('user/delete/', views.user_delete),
     path('user/<int:nid>/edit/', views.user_edit),
+
+    # app02 靓号管理
+    path('pretty/list/', views.pretty_list),
+    path('pretty/add/', views.pretty_add),
+    path('pretty/init_add/', views.pretty_init_add),
+    path('pretty/<int:nid>/edit/', views.pretty_edit),
+    path('pretty/delete/', views.pretty_delete),
+
 ]
