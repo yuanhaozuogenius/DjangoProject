@@ -1,4 +1,9 @@
 {% extends "layout.html" %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}">
+{% endblock %}
 
 {% block content %}
 
@@ -19,8 +24,27 @@
                         </div>
                     {% endfor %}
                     <button type="submit" class="btn btn-primary">提 交</button>
+                    <a class="btn btn-warning" href="/user/list/">
+                        返回
+                    </a>
                 </form>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block js %}
+    <script rel="stylesheet" src="{% static 'plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+    <script rel="stylesheet"
+            src="{% static 'plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js' %}"></script>
+    <script>
+        $(function () {
+            $('#id_create_time').datepicker({
+                format: 'yyyy-mm-dd',
+                startTime: '0',
+                language: 'zh-CN',
+                autoclose: true
+            });
+        })
+    </script>
 {% endblock %}

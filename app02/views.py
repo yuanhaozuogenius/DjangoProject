@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.shortcuts import render, redirect
 
 from app02 import models
+from app02.utils.pagination import Pagination
 
 
 def depart_list(request):
@@ -17,7 +18,13 @@ def depart_list(request):
     #  [对象,对象,对象]
     queryset = models.Department.objects.all()
 
-    return render(request, 'depart_list.html', {'queryset': queryset})
+    page_object = Pagination(request, queryset, page_size=3)
+    context = {
+        "queryset": page_object.page_queryset,
+        "page_string": page_object.html()
+    }
+
+    return render(request, 'depart_list.html', context)
 
 
 def depart_init_add(request):
@@ -92,7 +99,12 @@ def user_list(request):
         # obj.depart_id  # 获取数据库中存储的那个字段值
         # obj.depart.title  # 根据id自动去关联的表中获取哪一行数据depart对象。
     """
-    return render(request, 'user_list.html', {"queryset": queryset})
+    page_object = Pagination(request, queryset, page_size=5)
+    context = {
+        "queryset": page_object.page_queryset,
+        "page_string": page_object.html()
+    }
+    return render(request, 'user_list.html', context)
 
 
 def user_delete(request):
@@ -327,9 +339,25 @@ class PrettyEditModelForm(forms.ModelForm):
 def pretty_list(request):
     """ 靓号列表 """
 
+    # 靓号查找功能
+    data_dict = {}
+    # http://127.0.0.1:8000/pretty/list/?q=7724
+    search_data = request.GET.get('q', "")
+    if search_data:
+        data_dict["mobile__contains"] = search_data
+
+    # 进入页面后展示
     # select * from app02_prettynum order by id , level desc;
-    queryset = models.PrettyNum.objects.all().order_by("id", "-level")
-    return render(request, "pretty_list.html", {'queryset': queryset})
+    queryset = models.PrettyNum.objects.filter(**data_dict).order_by("id", "-level")
+
+    page_object = Pagination(request, queryset)
+
+    context = {
+        "search_data": search_data,
+        "queryset": page_object.page_queryset,  # 分完页的数据
+        "page_string": page_object.html()  # 页码
+    }
+    return render(request, "pretty_list.html", context)
 
 
 def pretty_add(request):
